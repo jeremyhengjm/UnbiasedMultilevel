@@ -1,0 +1,79 @@
+#' @rdname coupled2_pcn_kernel
+#' @title pCN kernel for two coupled chains
+#' @description generation of coupled proposals + accept/reject step
+#' @param level an integer that determines probability distribution
+#' @param state1 a list with state of the first chain
+#' @param state2 a list with state of the second chain
+#' @param identical a boolean variable that is True if chains are identical and False otherwise
+#' @param tuning a list of parameters neeeded for pCN (standatd deviation and rho)
+#' @param proposal_coupling function that determing proposal coupling
+#'@return a list that contains states of two chains, updated value of the flag "identical" and cost of computations
+#'@export
+
+coupled2_pcn_kernel <- function(level, state1, state2, identical, tuning, proposal_coupling){
+
+  cost = 0  # numerical cost of calculations
+  # extract state and pdf
+  chain_state1 <- state1$chain_state
+  chain_state2 <- state2$chain_state
+
+  current_pdf1 <- state1$current_pdf
+  current_pdf2 <- state2$current_pdf
+
+  # tuning parameters that define autoregressive proposal
+  proposal_sd <- tuning$proposal_sd
+  proposal_rho <- tuning$proposal_rho
+  proposal_sd_factor <- sqrt(1-proposal_rho^2) * proposal_sd
+
+  # propose from 2-way coupling (output list with state1, state2, identical)
+  proposal_value <- proposal_coupling(chain_state1, chain_state2, identical, tuning)
+  cost = cost + proposal_value$cost
+  # evaluate target density at proposals on same level
+  proposal_state1 <- proposal_value$state1
+  cost = cost + 2 ^ level
+  proposal_pdf1 <- logtarget(level, proposal_state1)
+  if (proposal_value$identical){
+    proposal_state2 <- proposal_state1
+    proposal_pdf2 <- proposal_pdf1
+  } else {
+    proposal_state2 <- proposal_value$state2
+    proposal_pdf2 <- logtarget(level, proposal_state2)
+    cost = cost + 2 ^ level
+  }
+
+  # compute acceptance probability
+  logacceptprob1 <- proposal_pdf1 - current_pdf1 +
+    sum(dnorm(chain_state1, mean = proposal_rho * proposal_state1, sd = proposal_sd_factor, log = TRUE)) -
+    sum(dnorm(proposal_state1, mean = proposal_rho * chain_state1, sd = proposal_sd_factor, log = TRUE))
+
+  logacceptprob2 <- proposal_pdf2 - current_pdf2 +
+    sum(dnorm(chain_state2, mean = proposal_rho * proposal_state2, sd = proposal_sd_factor, log = TRUE)) -
+    sum(dnorm(proposal_state2, mean = proposal_rho * chain_state2, sd = proposal_sd_factor, log = TRUE))
+
+  # accept or reject proposals
+  logu <- log(runif(1))
+  accept1 <- FALSE
+  accept2 <- FALSE
+
+  if (is.finite(proposal_pdf1)) accept1 <- (logu < logacceptprob1)
+  if (is.finite(proposal_pdf2)) accept2 <- (logu < logacceptprob2)
+
+  if (accept1){
+    chain_state1 <- proposal_state1
+    current_pdf1 <- proposal_pdf1
+  }
+  if (accept2){
+    chain_state2 <- proposal_state2
+    current_pdf2 <- proposal_pdf2
+  }
+
+  # check if chains are identical
+  if (!identical){
+    identical <- (proposal_value$identical && accept1 && accept2)
+  }
+
+  return(list(state1 = list(chain_state = chain_state1, current_pdf = current_pdf1),
+              state2 = list(chain_state = chain_state2, current_pdf = current_pdf2),
+              identical = identical, cost = cost))
+
+}
