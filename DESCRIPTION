@@ -1,13 +1,12 @@
 Package: UnbiasedMultilevel
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Unbiased estimators for discretized models
+Version: 1.0
+Author: Jeremy Heng and Alexander Tarakanov
+Maintainer: Jeremy Heng <jeremyhengjm@gmail.com>
+Description: This R package reproduces the numerical examples in the article "On Unbiased Estimation for Discretized Models" https://arxiv.org/abs/2102.12230
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-LinkingTo: Rcpp, RcppEigen
+LinkingTo: Rcpp
 RoxygenNote: 7.1.0

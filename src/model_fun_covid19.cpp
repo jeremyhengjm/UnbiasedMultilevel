@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <numeric>
 #include <time.h>
-#include <Rcpp.h>
 
 using namespace Rcpp;
 using namespace std;
