@@ -4,7 +4,7 @@
 #' @param parameters a list of model parameters (sigmasq, mu, beta)
 #' @param model a list of model functions with keys \code{logtarget}, \code{gradlogtarget}, \code{rinit} and \code{dimension}
 #' @param mcmc a list of MCMC kernels with keys \code{single_kernel} and \code{coupled2_kernel}
-#' @param h function that represents quantity of interest. Depends on level and spatial argument.
+#' @param h function that represents quantity of interest
 #' @param k an integer: lower bound for time-averaging
 #' @param m an integer:  upper bound for time-averaging
 #' @param max_iterations iteration at which to stop the while loop (default to infinity)
@@ -109,7 +109,8 @@ coxprocess_unbiased_expectation <- function(parameters, model, mcmc, h = functio
 #' @param model_coarse a list of functions for coarser resolution model with keys \code{logtarget}, \code{gradlogtarget}, \code{rinit} and \code{dimension}
 #' @param model_fine a list of functions for finer resolution model with keys \code{logtarget}, \code{gradlogtarget}, \code{rinit} and \code{dimension}
 #' @param mcmc a list of MCMC kernels with keys \code{multilevel_kernel} and \code{coupled4_kernel}
-#' @param h function that represents quantity of interest. Depends on level and spatial argument
+#' @param h_coarse function that represents quantity of interest on coarser resolution
+#' @param h_fine function that represents quantity of interest on finer resolution
 #' @param k an integer: lower bound for time-averaging
 #' @param m an integer:  upper bound for time-averaging
 #' @param max_iterations iteration at which to stop the while loop (default to infinity)
@@ -117,7 +118,8 @@ coxprocess_unbiased_expectation <- function(parameters, model, mcmc, h = functio
 #'@export
 
 coxprocess_unbiased_increment <- function(parameters, model_coarse, model_fine, mcmc,
-                                          h = function(x) x, k = 0, m = 1, max_iterations = Inf){
+                                          h_coarse = function(x) x, h_fine = function(x) x,
+                                          k = 0, m = 1, max_iterations = Inf){
   # MCMC kernels
   multilevel_kernel <- mcmc$multilevel_kernel
   coupled4_kernel <- mcmc$coupled4_kernel
@@ -142,8 +144,8 @@ coxprocess_unbiased_increment <- function(parameters, model_coarse, model_fine, 
   identical_coarse <- FALSE
   identical_fine <- FALSE
 
-  mcmcestimator_coarse <- h(chain_state_coarse1)
-  mcmcestimator_fine <- h(chain_state_fine1)
+  mcmcestimator_coarse <- h_coarse(chain_state_coarse1)
+  mcmcestimator_fine <- h_fine(chain_state_fine1)
   dimh <- length(mcmcestimator_coarse)
   if (k > 0){
     mcmcestimator_coarse <- rep(0, dimh)
@@ -162,13 +164,13 @@ coxprocess_unbiased_increment <- function(parameters, model_coarse, model_fine, 
 
   if (k == 0){
     correction_coarse <- correction_coarse + (min(1, (0 - k + 1)/(m - k + 1))) *
-      (h(chain_state_coarse1) - h(chain_state_coarse2))
+      (h_coarse(chain_state_coarse1) - h_coarse(chain_state_coarse2))
     correction_fine <- correction_fine + (min(1, (0 - k + 1)/(m - k + 1))) *
-      (h(chain_state_fine1) - h(chain_state_fine2))
+      (h_fine(chain_state_fine1) - h_fine(chain_state_fine2))
   }
   if (k <= 1 && m >= 1){
-    mcmcestimator_coarse <- mcmcestimator_coarse + h(chain_state_coarse1)
-    mcmcestimator_fine <- mcmcestimator_fine + h(chain_state_fine1)
+    mcmcestimator_coarse <- mcmcestimator_coarse + h_coarse(chain_state_coarse1)
+    mcmcestimator_fine <- mcmcestimator_fine + h_fine(chain_state_fine1)
   }
 
   # initialize
@@ -205,30 +207,30 @@ coxprocess_unbiased_increment <- function(parameters, model_coarse, model_fine, 
     # update estimator for coarse discretization level
     if (meet_coarse){
       if (k <= iter && iter <= m){
-        mcmcestimator_coarse <- mcmcestimator_coarse + h(chain_state_coarse1)
+        mcmcestimator_coarse <- mcmcestimator_coarse + h_coarse(chain_state_coarse1)
       }
     } else {
       if (k <= iter){
         if (iter <= m){
-          mcmcestimator_coarse <- mcmcestimator_coarse + h(chain_state_coarse1)
+          mcmcestimator_coarse <- mcmcestimator_coarse + h_coarse(chain_state_coarse1)
         }
         correction_coarse <- correction_coarse + (min(1, (iter-1 - k + 1)/(m - k + 1))) *
-          (h(chain_state_coarse1) - h(chain_state_coarse2))
+          (h_coarse(chain_state_coarse1) - h_coarse(chain_state_coarse2))
       }
     }
 
     # update estimator for fine discretization level
     if (meet_fine){
       if (k <= iter && iter <= m){
-        mcmcestimator_fine <- mcmcestimator_fine + h(chain_state_fine1)
+        mcmcestimator_fine <- mcmcestimator_fine + h_fine(chain_state_fine1)
       }
     } else {
       if (k <= iter){
         if (iter <= m){
-          mcmcestimator_fine <- mcmcestimator_fine + h(chain_state_fine1)
+          mcmcestimator_fine <- mcmcestimator_fine + h_fine(chain_state_fine1)
         }
         correction_fine <- correction_fine + (min(1, (iter-1 - k + 1)/(m - k + 1))) *
-          (h(chain_state_fine1) - h(chain_state_fine2))
+          (h_fine(chain_state_fine1) - h_fine(chain_state_fine2))
       }
     }
 

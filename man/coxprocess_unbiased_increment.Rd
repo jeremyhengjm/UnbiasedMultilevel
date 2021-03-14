@@ -9,7 +9,8 @@ coxprocess_unbiased_increment(
   model_coarse,
   model_fine,
   mcmc,
-  h = function(x) x,
+  h_coarse = function(x) x,
+  h_fine = function(x) x,
   k = 0,
   m = 1,
   max_iterations = Inf
@@ -24,7 +25,9 @@ coxprocess_unbiased_increment(
 
 \item{mcmc}{a list of MCMC kernels with keys \code{multilevel_kernel} and \code{coupled4_kernel}}
 
-\item{h}{function that represents quantity of interest. Depends on level and spatial argument}
+\item{h_coarse}{function that represents quantity of interest on coarser resolution}
+
+\item{h_fine}{function that represents quantity of interest on finer resolution}
 
 \item{k}{an integer: lower bound for time-averaging}
 

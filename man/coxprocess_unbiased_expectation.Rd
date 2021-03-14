@@ -21,7 +21,7 @@ coxprocess_unbiased_expectation(
 
 \item{mcmc}{a list of MCMC kernels with keys \code{single_kernel} and \code{coupled2_kernel}}
 
-\item{h}{function that represents quantity of interest. Depends on level and spatial argument.}
+\item{h}{function that represents quantity of interest}
 
 \item{k}{an integer: lower bound for time-averaging}
 
