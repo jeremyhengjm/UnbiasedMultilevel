@@ -8,18 +8,18 @@
 #' @param coupled2_kernel a function that makes a single step through a specified coupled MCMC kernel for all four chains
 #' @param proposal_coupling2 a function that generates proposal for a given input for two coupled chains (burn-in + lag)
 #' @param proposal_coupling4 a function that generates proposal for a given input for four coupled chains (main run)
-#' @param tuning a list of parameters reuired for MCMC iterations (for instance standard deviation for RWM)
-#' @param tuning_coarse a list of parameters reuired for MCMC iterations for the coarse level (for instance standard deviation for RWM)
-#' @param tuning_fine a list of parameters reuired for MCMC iterations for the fine level (for instance standard deviation for RWM)
+#' @param tuning a list of parameters required for MCMC iterations (for instance standard deviation for RWM)
+#' @param tuning_coarse a list of parameters required for MCMC iterations for the coarse level (for instance standard deviation for RWM)
+#' @param tuning_fine a list of parameters required for MCMC iterations for the fine level (for instance standard deviation for RWM)
 #' @param h function that represents quantity of interest. Depends on level and spatial argument.
 #' @param k an integer: lower bound for time-averaging
 #' @param m an integer:  upper bound for time-averaging
-#' @param max_iterations and integer: bound for the number of steps through coupled MCMC kernel
-#' @param samping_factor a real value that controls the magnitude of perturnabtion at the initialization step
+#' @param max_iterations iteration at which to stop the while loop (default to infinity)
+#' @param samping_factor a real value that controls the magnitude of perturbation at the initialization step
 #'@return a list with the value of MCMC estimator without correction, value of Unbiased MCMC estimator, meeting time, value of iteration counter, flag that is "True" if chains have met before the iteration counter reached the value in max_iterations, cost of calculations
 #'@export
 
-unbiased_increment <- function(level, rinit, single_kernel, 
+unbiased_increment <- function(level, rinit, single_kernel,
                                coupled2_kernel, coupled4_kernel, proposal_coupling2, proposal_coupling4,
                                tuning, tuning_coarse, tuning_fine,
                                h = function(l, x) x, k = 0, m = 1, max_iterations = Inf,
@@ -37,7 +37,7 @@ unbiased_increment <- function(level, rinit, single_kernel,
   cost = cost + 2 ^ level  # single calculation of the likelihood at level l
   identical_coarse <- FALSE
   identical_fine <- FALSE
-  
+
   base_state = 0.0 + state_coarse1$chain_state
   generation <- TRUE
   while (generation)
@@ -149,7 +149,7 @@ unbiased_increment <- function(level, rinit, single_kernel,
                                              identical_coarse, identical_fine,
                                              tuning, tuning,
                                              proposal_coupling4)
-  
+
     state_coarse1 <- coupled_kernel_output$state_coarse1
     state_coarse2 <- coupled_kernel_output$state_coarse2
     state_fine1 <- coupled_kernel_output$state_fine1

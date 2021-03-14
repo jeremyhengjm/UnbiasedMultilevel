@@ -257,3 +257,24 @@ observation_grad_toyexample <- function(param, l) {
     .Call('_UnbiasedMultilevel_observation_grad_toyexample', PACKAGE = 'UnbiasedMultilevel', param, l)
 }
 
+#' @export
+coxprocess_loglikelihood <- function(x, counts, area) {
+    .Call('_UnbiasedMultilevel_coxprocess_loglikelihood', PACKAGE = 'UnbiasedMultilevel', x, counts, area)
+}
+
+rmvnorm <- function(nsamples, mean, covariance) {
+    .Call('_UnbiasedMultilevel_rmvnorm', PACKAGE = 'UnbiasedMultilevel', nsamples, mean, covariance)
+}
+
+rmvnorm_cholesky <- function(nsamples, mean, cholesky) {
+    .Call('_UnbiasedMultilevel_rmvnorm_cholesky', PACKAGE = 'UnbiasedMultilevel', nsamples, mean, cholesky)
+}
+
+dmvnorm <- function(x, mean, covariance) {
+    .Call('_UnbiasedMultilevel_dmvnorm', PACKAGE = 'UnbiasedMultilevel', x, mean, covariance)
+}
+
+dmvnorm_cholesky_inverse <- function(x, mean, cholesky_inverse) {
+    .Call('_UnbiasedMultilevel_dmvnorm_cholesky_inverse', PACKAGE = 'UnbiasedMultilevel', x, mean, cholesky_inverse)
+}
+

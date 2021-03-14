@@ -36,7 +36,7 @@ unbiased_expectation(
 
 \item{m}{an integer:  upper bound for time-averaging}
 
-\item{max_iterations}{and integer: bound for the number of steps through coupled MCMC kernel}
+\item{max_iterations}{iteration at which to stop the while loop (default to infinity)}
 }
 \value{
 a list with the value of MCMC estimator without correction, value of Unbiased MCMC estimator, meeting time, value of iteration counter, flag that is "True" if chains have met before the iteration counter reached the value in max_iterations, cost of calculations

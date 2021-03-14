@@ -35,11 +35,11 @@ unbiased_increment(
 
 \item{proposal_coupling4}{a function that generates proposal for a given input for four coupled chains (main run)}
 
-\item{tuning}{a list of parameters reuired for MCMC iterations (for instance standard deviation for RWM)}
+\item{tuning}{a list of parameters required for MCMC iterations (for instance standard deviation for RWM)}
 
-\item{tuning_coarse}{a list of parameters reuired for MCMC iterations for the coarse level (for instance standard deviation for RWM)}
+\item{tuning_coarse}{a list of parameters required for MCMC iterations for the coarse level (for instance standard deviation for RWM)}
 
-\item{tuning_fine}{a list of parameters reuired for MCMC iterations for the fine level (for instance standard deviation for RWM)}
+\item{tuning_fine}{a list of parameters required for MCMC iterations for the fine level (for instance standard deviation for RWM)}
 
 \item{h}{function that represents quantity of interest. Depends on level and spatial argument.}
 
@@ -47,9 +47,9 @@ unbiased_increment(
 
 \item{m}{an integer:  upper bound for time-averaging}
 
-\item{max_iterations}{and integer: bound for the number of steps through coupled MCMC kernel}
+\item{max_iterations}{iteration at which to stop the while loop (default to infinity)}
 
-\item{samping_factor}{a real value that controls the magnitude of perturnabtion at the initialization step}
+\item{samping_factor}{a real value that controls the magnitude of perturbation at the initialization step}
 }
 \value{
 a list with the value of MCMC estimator without correction, value of Unbiased MCMC estimator, meeting time, value of iteration counter, flag that is "True" if chains have met before the iteration counter reached the value in max_iterations, cost of calculations

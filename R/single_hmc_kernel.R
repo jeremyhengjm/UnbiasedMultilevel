@@ -24,7 +24,7 @@ single_hmc_kernel <- function(level, state, tuning){
 
   # compute pdf of proposal
   proposed_pdf <- logtarget(level, proposed_x)
-  cost = cost + 2 ^ level
+  cost <- cost + 2^level
 
   # compute acceptance probability
   logacceptprob <- proposed_pdf - current_pdf
@@ -41,9 +41,8 @@ single_hmc_kernel <- function(level, state, tuning){
     current_pdf <- proposed_pdf
   }
 
-  chain_data = list(chain_state = chain_state, current_pdf = current_pdf, accept = accept)    
+  chain_data = list(chain_state = chain_state, current_pdf = current_pdf, accept = accept)
   return(list(chain_data = chain_data, cost = cost))
-
 
 }
 

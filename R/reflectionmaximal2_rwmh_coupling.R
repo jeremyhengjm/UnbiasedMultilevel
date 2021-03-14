@@ -9,24 +9,14 @@
 #'@export
 
 reflectionmaximal2_rwmh_coupling <- function(chain_state1, chain_state2, identical, tuning){
-  cost = 0  # cost of proposal generation
+  cost <- 0  # cost of proposal generation
   # extract tuning parameters
   proposal_sd <- tuning$proposal_sd
-
-  #print("inside the proposal coupling routine")
-  #print("chain_state1")
-  #print(chain_state1)
-  #print("chain_state2")
-  #print(chain_state2)
-  #print("tuning")
-  #print(tuning)
-  #print("identical")
-  #print(identical)
 
   # sample first proposal
   randn1 <- rnorm(dimension)
   state1 <- chain_state1 + proposal_sd * randn1
-  
+
   # difference
   zdiff <- (chain_state1 - chain_state2) / proposal_sd
 

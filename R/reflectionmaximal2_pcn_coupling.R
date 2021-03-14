@@ -9,35 +9,35 @@
 #'@export
 
 reflectionmaximal2_pcn_coupling <- function(chain_state1, chain_state2, identical, tuning){
-  cost = 0  # cost of proposal generation
+  cost <- 0  # cost of proposal generation
   # extract tuning parameters
   proposal_sd <- tuning$proposal_sd
   proposal_rho <- tuning$proposal_rho
   proposal_sd_factor <- sqrt(1-proposal_rho^2) * proposal_sd
-  
+
   # sample first proposal
   randn1 <- rnorm(dimension)
   state1 <- proposal_rho * chain_state1 + proposal_sd_factor * randn1
-  
+
   # difference
   zdiff <- proposal_rho * (chain_state1 - chain_state2) / proposal_sd_factor
-  
+
   # evaluate proposal transition densities at first proposal
   pdf1 <- sum(dnorm(randn1, log = TRUE))
   pdf2 <- sum(dnorm(randn1 + zdiff, log = TRUE))
   logacceptprob <- min(pdf1, pdf2) - pdf1
-  
+
   if (log(runif(1)) < logacceptprob){
     # return common proposal for both chains
     return(list(state1 = state1, state2 = state1, identical = TRUE, cost = cost))
-    
+
   } else {
     # perform reflection for second proposal
     evec <- zdiff / sqrt(sum(zdiff^2))
     randn2 <- randn1 - 2 * sum(evec * randn1) * evec
     state2 <- proposal_rho * chain_state2 + proposal_sd_factor * randn2
     return(list(state1 = state1, state2 = state2, identical = FALSE, cost = cost))
-    
+
   }
 }
 

@@ -13,19 +13,21 @@ leapfrog <- function(level, x, v, tuning){
   # extract tuning parameters
   stepsize <- tuning$stepsize
   nsteps <- tuning$nsteps
-  cost = 0
+  cost <- 0
+  dimension <- length(v)
 
   v <- v + stepsize * gradlogtarget(level, x) / 2
-  cost = cost + length(v) * 2 ^ level
+  cost <- cost + dimension * 2^level
   for (step in 1:nsteps){
     x <- x + stepsize * v
     if (step != nsteps){
       v <- v + stepsize * gradlogtarget(level, x)
-      cost = cost + length(v) * 2 ^ level
+      cost <- cost + dimension * 2^level
     }
   }
   v <- v + stepsize * gradlogtarget(level, x) / 2
-  cost = cost + length(v) * 2 ^ level
+  cost <- cost + length(v)*2^level
+
   # we could negate the momentum but we don't use it here
   return(list(x = x, v = v, cost = cost))
 }
